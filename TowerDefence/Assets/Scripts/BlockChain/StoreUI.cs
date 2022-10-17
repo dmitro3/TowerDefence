@@ -49,7 +49,7 @@ public class StoreUI : MonoBehaviour
     {
         for (int i = 0; i < balanceText.Length; i++)
         {
-            balanceText[i].text = "Balance : " + BlockChainManager.userBalance.ToString();
+            balanceText[i].text = "Balance : " + MoralisManager.userBalance.ToString();
         }
 
     }
@@ -67,7 +67,7 @@ public class StoreUI : MonoBehaviour
         loadingUI.SetActive(true);
         mainShopUI.SetActive(false);
 
-        List<string> result = await BlockChainManager.Instance.GetNFTList();
+        List<string> result = await MoralisManager.Instance.GetNFTList();
         List<int> purchasedItems = new List<int>();
         purchasedItems.Add(0);
         if (result.Count > 0)
@@ -127,10 +127,8 @@ public class StoreUI : MonoBehaviour
         LocalData data = DatabaseManager.Instance.GetLocalData();
 
 
-#if UNITY_EDITOR
-        //data.coins = 999999;
-#endif
-        if (data.coins < 500 * index)
+
+        if (data.coins < 500 * (index + 1))
         {
             MessaeBox.insta.showMsg("No Enough Coins!",true);
             return;

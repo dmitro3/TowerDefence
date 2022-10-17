@@ -141,11 +141,18 @@ public class PlayerController : MonoBehaviour, IDamageable
    
     private void Update()
     {
+        if (isAlive)
+        {
+            Move();
+        }
+
         if (isAlive && !_animator.GetBool("isChilling"))
         {
             HandleFacing();
             HandleAiming();
         }
+
+
     }
 
     private void HandleFacing()
@@ -178,7 +185,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     public void OnTakeDamage(float damage = 1, float Multiplier = 1)
     {
         Health -= damage;
-        Debug.Log("hit");
+        //Debug.Log("hit");
         
         if (Health <= 0)
         {
@@ -297,7 +304,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         return false;
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate2()
     {
         if (isAlive)
         {

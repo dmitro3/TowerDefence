@@ -50,7 +50,7 @@ public class BlockChainManager : MonoBehaviour
 
     float[] coinCost = { 0.025f, 0.050f, 0.075f, 0.1f, 0.050f };
 
-    public static float userBalance = 0;
+   
 
     [DllImport("__Internal")]
     private static extern void Web3Connect();
@@ -186,7 +186,9 @@ public class BlockChainManager : MonoBehaviour
     #region BuyCoins
     async public void CoinBuyOnSendContract(int _pack)
     {
-        if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin purchase process started\nThis can up to minute", false);
+
+        MoralisManager.Instance.CoinBuyOnSendContract(_pack);
+       /* if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin purchase process started\nThis can up to minute", false);
 
         object[] inputParams = { _pack };
 
@@ -244,7 +246,7 @@ public class BlockChainManager : MonoBehaviour
         {
             if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
             Debug.Log(e, this);
-        }
+        }*/
     }
     #endregion
 
@@ -466,7 +468,8 @@ public class BlockChainManager : MonoBehaviour
 
     public async Task<List<string>> GetNFTList()
     {
-        // smart contract method to call
+        return await MoralisManager.Instance.GetNFTList();
+        /*// smart contract method to call
         List<string> nftList = new List<string>();
         nftList.Clear();
         string method = "GetAllUserToken";
@@ -496,7 +499,7 @@ public class BlockChainManager : MonoBehaviour
         {
             Debug.Log(e, this);
             return nftList;
-        }
+        }*/
     }
 
     async public static void getTokenBalance()
@@ -543,25 +546,7 @@ public class BlockChainManager : MonoBehaviour
     #region CheckUserBalance
     async public void CheckUserBalance()
     {
-        try
-        {
-
-            string response = await EVM.BalanceOf(chain, network, PlayerPrefs.GetString("Account"), networkRPC);
-            if (!string.IsNullOrEmpty(response))
-            {
-                float wei = float.Parse(response);
-                float decimals = 1000000000000000000; // 18 decimals
-                float eth = wei / decimals;
-                // print(Convert.ToDecimal(eth).ToString());
-                Debug.Log(Convert.ToDecimal(eth).ToString());
-                userBalance = float.Parse(Convert.ToDecimal(eth).ToString());
-               
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e, this);
-        }
+        MoralisManager.Instance.CheckUserBalance();
     }
     #endregion
 
@@ -572,7 +557,9 @@ public class BlockChainManager : MonoBehaviour
     {
         Debug.Log("purchaseItem");
 
-        MetadataNFT meta = new MetadataNFT();
+        MoralisManager.Instance.purchaseItem(_id, _skin);
+
+       /* MetadataNFT meta = new MetadataNFT();
 
 
         meta.itemid = DatabaseManager.Instance.allMetaDataServer[_id].itemid;
@@ -581,7 +568,7 @@ public class BlockChainManager : MonoBehaviour
         meta.image = DatabaseManager.Instance.allMetaDataServer[_id].imageurl;
 
         //StartCoroutine(UploadNFTMetadata(Newtonsoft.Json.JsonConvert.SerializeObject(meta), _id, _skin));
-        StartCoroutine(Upload(Newtonsoft.Json.JsonConvert.SerializeObject(meta), _id, _skin));
+        StartCoroutine(Upload(Newtonsoft.Json.JsonConvert.SerializeObject(meta), _id, _skin));*/
 
     }
 

@@ -48,8 +48,8 @@ public class ReloadBox : MonoBehaviour
             _renderer.color = repair_color;
         }
 
-        Debug.Log("chance for ammo is " + chanceForAmmo);
-        Debug.Log("chance for Repair is " + chanceForRepair);
+        //Debug.Log("chance for ammo is " + chanceForAmmo);
+        //Debug.Log("chance for Repair is " + chanceForRepair);
     }
 
     private void RelocateToNewPos()

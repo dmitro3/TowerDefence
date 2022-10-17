@@ -1,4 +1,6 @@
 
+using MoralisUnity;
+using MoralisUnity.Platform.Queries;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -114,13 +116,53 @@ public class SingletonDataManager : MonoBehaviour
 
     public async void CheckUserData()
     {
-       
+        MoralisQuery<Userdata> monster = await Moralis.Query<Userdata>();
+        monster = monster.WhereEqualTo("userid", useruniqid);
+        IEnumerable<Userdata> result = await monster.FindAsync();
+
+        var datathere = false;
+
+        foreach (Userdata mon in result)
+        {
+            Debug.Log("My username " + mon.userid + " and  data " + mon.userdata);
+            DatabaseManager.data = JsonConvert.DeserializeObject<LocalData>(mon.userdata);
+            datathere = true;
+
+            //UpdateUserDatabase(_uniqid);
+            break;
+        }
+
+        if (!datathere)
+        {
+            Debug.Log("addNewUserData");
+            addNewUserData();
+        }
+        else
+        {
+            Debug.Log("userDataAlreadyThere");
+            if (initData)
+            {
+                initData = false;
+                //UnityEngine.SceneManagement.SceneManager.LoadScene("MetaJump");
+            }
+        }
     }
 
     public async void addNewUserData()
     {
-       
 
+        Userdata monster = Moralis.GetClient().Create<Userdata>();
+        monster.userid = useruniqid;
+        //DatabaseManager.data.name = "Player" + UnityEngine.Random.Range(0, 99999).ToString();
+        monster.userdata = JsonConvert.SerializeObject(DatabaseManager.data);
+        monster.gamedata = "gamedataNeedToAdd";
+        var result = await monster.SaveAsync();
+
+        if (result)
+        {
+            Debug.Log("CheckUserData Again");
+            CheckUserData();
+        }
     }
 
 

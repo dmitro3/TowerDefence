@@ -1,14 +1,12 @@
 using Defective.JSON;
-using MoralisUnity.Platform.Queries;
-using System;
 using MoralisUnity;
 using MoralisUnity.Platform.Queries;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -27,25 +25,25 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    
+
     #endregion
 
 
 
-    private LocalData data=new LocalData();
+    public static LocalData data = new LocalData();
 
-    public  List<MetaFunNFTLocal> allMetaDataServer = new List<MetaFunNFTLocal>();
+    public List<MetaFunNFTLocal> allMetaDataServer = new List<MetaFunNFTLocal>();
     public LocalData GetLocalData()
     {
-       
+
         return data;
     }
 
 
     private void Start()
     {
-       StartCoroutine(getNFTAllData());
-       // GetData();
+        StartCoroutine(getNFTAllData());
+        // GetData();
     }
 
 
@@ -74,139 +72,195 @@ public class DatabaseManager : MonoBehaviour
     /// <param name="dataType"></param>
     /// <param name="createnew"></param>
     /// <returns></returns>
-    IEnumerator updateProfile(int dataType, bool createnew = false)
+
+
+    public async void updateProfile(int dataType, bool createnew = false)
     {
-
-        JSONObject a = new JSONObject();
-        JSONObject b = new JSONObject();
-        JSONObject c = new JSONObject();
-        //JSONObject d = new JSONObject();
-        string url = ConstantManager.getProfile_api + PlayerPrefs.GetString("Account", "test").ToLower();
-        switch (dataType)
+        if (createnew)
         {
-            case 0:
-                if (!createnew) url += "?updateMask.fieldPaths=userdata";
-               
-
-                c.AddField("stringValue", Newtonsoft.Json.JsonConvert.SerializeObject(data));
-                b.AddField("userdata", c);
-                break;
-           /* case 3:
-                if (!createnew) url += "?updateMask.fieldPaths=gamedata";
-                c.AddField("stringValue", PlayerPrefs.GetString("data"));
-                b.AddField("gamedata", c);
-                break;*/
+            //data.name = "Player" + UnityEngine.Random.Range(0, 99999).ToString();
+        }
+        // if (UIManager.insta) UIManager.insta.UpdatePlayerUIData(true);
+        MoralisQuery<Userdata> monster = await Moralis.Query<Userdata>();
+        monster = monster.WhereEqualTo("userid", SingletonDataManager.useruniqid);
+        IEnumerable<Userdata> result = await monster.FindAsync();
+        foreach (Userdata mon in result)
+        {
+            mon.userdata = JsonConvert.SerializeObject(data);
+            await mon.SaveAsync();
+            Debug.Log("UpdateUserDatabase");
+            if (UIManager.Instance)
+            {
+                //UIManager.Instance.UpdatePlayerUIData(true, data);
+            }
+            if (UIManager.Instance)
+            {
+                UIManager.Instance.UpdatePlayerUIData(data);
+            }
+            break;
         }
 
-        WWWForm form = new WWWForm();
-
-        Debug.Log("TEST updateProfile");
-
-        // Serialize body as a Json string
-        //string requestBodyString = "";
-
-
-
-        a.AddField("fields", b);
-
-        Debug.Log(a.Print(true));
-
-        // Convert Json body string into a byte array
-        byte[] requestBodyData = System.Text.Encoding.UTF8.GetBytes(a.Print());
-
-        using (UnityWebRequest www = UnityWebRequest.Put(url, requestBodyData))
-        {
-            www.method = "PATCH";
-
-            // Set request headers i.e. conent type, authorization etc
-            //www.SetRequestHeader("Content-Type", "application/json");
-            www.SetRequestHeader("Content-length", (requestBodyData.Length.ToString()));
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                //JSONObject obj = new JSONObject(www.downloadHandler.text);
-                Debug.Log(www.downloadHandler.text);
-                //Debug.Log(obj.GetField("fields").GetField("musedata").GetField("stringValue").stringValue);
-                if (UIManager.Instance)
+        /*
+                JSONObject a = new JSONObject();
+                JSONObject b = new JSONObject();
+                JSONObject c = new JSONObject();
+                //JSONObject d = new JSONObject();
+                string url = ConstantManager.getProfile_api + PlayerPrefs.GetString("Account", "test").ToLower();
+                switch (dataType)
                 {
-                    UIManager.Instance.UpdatePlayerUIData(data);
+                    case 0:
+                        if (!createnew) url += "?updateMask.fieldPaths=userdata";
+
+
+                        c.AddField("stringValue", Newtonsoft.Json.JsonConvert.SerializeObject(data));
+                        b.AddField("userdata", c);
+                        break;
+                   *//* case 3:
+                        if (!createnew) url += "?updateMask.fieldPaths=gamedata";
+                        c.AddField("stringValue", PlayerPrefs.GetString("data"));
+                        b.AddField("gamedata", c);
+                        break;*//*
                 }
-            }
-        }
+
+                WWWForm form = new WWWForm();
+
+                Debug.Log("TEST updateProfile");
+
+                // Serialize body as a Json string
+                //string requestBodyString = "";
+
+
+
+                a.AddField("fields", b);
+
+                Debug.Log(a.Print(true));
+
+                // Convert Json body string into a byte array
+                byte[] requestBodyData = System.Text.Encoding.UTF8.GetBytes(a.Print());
+
+                using (UnityWebRequest www = UnityWebRequest.Put(url, requestBodyData))
+                {
+                    www.method = "PATCH";
+
+                    // Set request headers i.e. conent type, authorization etc
+                    //www.SetRequestHeader("Content-Type", "application/json");
+                    www.SetRequestHeader("Content-length", (requestBodyData.Length.ToString()));
+                    yield return www.SendWebRequest();
+
+                    if (www.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.Log(www.error);
+                    }
+                    else
+                    {
+                        //JSONObject obj = new JSONObject(www.downloadHandler.text);
+                        Debug.Log(www.downloadHandler.text);
+                        //Debug.Log(obj.GetField("fields").GetField("musedata").GetField("stringValue").stringValue);
+                        if (UIManager.Instance)
+                        {
+                            UIManager.Instance.UpdatePlayerUIData(data);
+                        }
+                    }
+                }*/
     }
     [SerializeField] GameObject LoadingPanel;
     [SerializeField] GameObject MainPanel;
     [SerializeField] TMPro.TMP_Text coinCount;
-    IEnumerator CheckProfile()
+    public async void CheckProfile()
     {
-        string url = ConstantManager.getProfile_api + PlayerPrefs.GetString("Account", "test").ToLower();
+        MoralisQuery<Userdata> monster = await Moralis.Query<Userdata>();
+        monster = monster.WhereEqualTo("userid", SingletonDataManager.useruniqid);
+        IEnumerable<Userdata> result = await monster.FindAsync();
 
-        using (UnityWebRequest www = UnityWebRequest.Get(url))
+
+
+        foreach (Userdata mon in result)
         {
-            //www.method = "PATCH";
+            Debug.Log("My username " + mon.userid + " and  data " + mon.userdata);
+            //userData = JsonConvert.DeserializeObject<localuserData>(mon.userdata);
+            data = Newtonsoft.Json.JsonConvert.DeserializeObject<LocalData>(mon.userdata);
 
-            // Set request headers i.e. conent type, authorization etc
-            //www.SetRequestHeader("Content-Type", "application/json");
-            // www.SetRequestHeader("Content-length", (requestBodyData.Length.ToString()));
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("Profile not found " + www.downloadHandler.text);
-                //Debug.Log(www.error);
-                Debug.Log(www.downloadHandler.text);
-
-                StartCoroutine(updateProfile(0, true));
-            }
-            else
-            {
-
-                JSONObject obj = new JSONObject(www.downloadHandler.text);
-                Debug.Log(obj);
-                //Debug.Log("CheckProfile " + www.downloadHandler.text);
-                data = Newtonsoft.Json.JsonConvert.DeserializeObject<LocalData>(obj.GetField("fields").GetField("userdata").GetField("stringValue").stringValue);
-                if(data != null)
-                {
-                    LoadingPanel.SetActive(false);
-                    MainPanel.SetActive(true);
-
-                    coinCount.text = data.coins.ToString();
-
-                }
-                if(data != null && GunDemoScript.Instance)
-                {
-                    GunDemoScript.Instance.SelectGun(data.selectedTheme);
-                }
-
-                if (data.transactionsInformation != null && data.transactionsInformation.Count > 0)
-                {
-                    for (int i = 0; i < data.transactionsInformation.Count; i++)
-                    {
-                        if (data.transactionsInformation[i].transactionStatus.Equals("pending"))
-                        {
-                            Debug.Log("Pending Test 1");
-                            BlockChainManager.CheckTransactionStatusWithTransID(data.transactionsInformation[i].transactionId,0);
-                        }
-                    }
-                }
-
-            }
+            break;
         }
+
+        if (data != null)
+        {
+            LoadingPanel.SetActive(false);
+            MainPanel.SetActive(true);
+
+            coinCount.text = data.coins.ToString();
+
+        }
+        if (data != null && GunDemoScript.Instance)
+        {
+            GunDemoScript.Instance.SelectGun(data.selectedTheme);
+        }
+
+
+        /* string url = ConstantManager.getProfile_api + PlayerPrefs.GetString("Account", "test").ToLower();
+
+         using (UnityWebRequest www = UnityWebRequest.Get(url))
+         {
+             //www.method = "PATCH";
+
+             // Set request headers i.e. conent type, authorization etc
+             //www.SetRequestHeader("Content-Type", "application/json");
+             // www.SetRequestHeader("Content-length", (requestBodyData.Length.ToString()));
+             yield return www.SendWebRequest();
+
+             if (www.result != UnityWebRequest.Result.Success)
+             {
+                 Debug.Log("Profile not found " + www.downloadHandler.text);
+                 //Debug.Log(www.error);
+                 Debug.Log(www.downloadHandler.text);
+
+                // StartCoroutine(updateProfile(0, true));
+                updateProfile(0, true);
+             }
+             else
+             {
+
+                 JSONObject obj = new JSONObject(www.downloadHandler.text);
+                 Debug.Log(obj);
+                 //Debug.Log("CheckProfile " + www.downloadHandler.text);
+                 data = Newtonsoft.Json.JsonConvert.DeserializeObject<LocalData>(obj.GetField("fields").GetField("userdata").GetField("stringValue").stringValue);
+                 if(data != null)
+                 {
+                     LoadingPanel.SetActive(false);
+                     MainPanel.SetActive(true);
+
+                     coinCount.text = data.coins.ToString();
+
+                 }
+                 if(data != null && GunDemoScript.Instance)
+                 {
+                     GunDemoScript.Instance.SelectGun(data.selectedTheme);
+                 }
+
+                 if (data.transactionsInformation != null && data.transactionsInformation.Count > 0)
+                 {
+                     for (int i = 0; i < data.transactionsInformation.Count; i++)
+                     {
+                         if (data.transactionsInformation[i].transactionStatus.Equals("pending"))
+                         {
+                             Debug.Log("Pending Test 1");
+                             BlockChainManager.CheckTransactionStatusWithTransID(data.transactionsInformation[i].transactionId,0);
+                         }
+                     }
+                 }
+
+             }
+         }*/
     }
 
-  
+
     IEnumerator getNFTAllData()
     {
-        
+
         using (UnityWebRequest www = UnityWebRequest.Get(ConstantManager.getgameNFTData_api))
         {
-              www.timeout = 60;
-              yield return www.SendWebRequest();
+            www.timeout = 60;
+            yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
@@ -226,7 +280,7 @@ public class DatabaseManager : MonoBehaviour
                 Debug.Log("Data >>  " + obj);
 
                 allMetaDataServer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<MetaFunNFTLocal>>(obj.GetField("fields").GetField("data").GetField("stringValue").stringValue);
-                
+
                 GetAllNFTImg();
             }
         }
@@ -255,14 +309,14 @@ public class DatabaseManager : MonoBehaviour
     }
 
     public Texture GetNFTTexture(int tokenId)
-    {       
+    {
         MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid == tokenId);
         return result.imageTexture;
     }
 
     public string GetNFTName(int tokenId)
     {
-        MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid ==tokenId);
+        MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid == tokenId);
         return result.name;
     }
     public MetaFunNFTLocal GetNFTMetaData(int tokenId)
@@ -274,44 +328,44 @@ public class DatabaseManager : MonoBehaviour
 
     public void GetData()
     {
-        StartCoroutine(CheckProfile());
+        CheckProfile();
         //ConvertEpochToDatatime(1659504437);
     }
 
     public void UpdateData(LocalData localData)
     {
         data = localData;
-        StartCoroutine(updateProfile(0));
+        updateProfile(0);
     }
     async public void UpdateSpinData()
     {
-        data = GetLocalData();       
-        StartCoroutine(updateProfile(0));
+        data = GetLocalData();
+        updateProfile(0);
     }
-   
-  /*  public DateTime ConvertEpochToDatatime(long epochSeconds) {
-        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(epochSeconds);
-        DateTime dateTime = dateTimeOffset.DateTime;
-        
-        return dateTime;
-    }
-*/
+
+    /*  public DateTime ConvertEpochToDatatime(long epochSeconds) {
+          DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(epochSeconds);
+          DateTime dateTime = dateTimeOffset.DateTime;
+
+          return dateTime;
+      }
+  */
     async public Task<long> GetCurrentTime()
     {
-        
-        string result =await BlockChainManager.Instance.CheckTimeStatus();
-       
+
+        string result = await BlockChainManager.Instance.CheckTimeStatus();
+
         long currentEpoch;
         if (!string.IsNullOrEmpty(result))
         {
-            currentEpoch=long.Parse(result);
+            currentEpoch = long.Parse(result);
         }
         else
         {
             currentEpoch = 1659504437;
         }
         // Get Current EPOCH Time
-       // DateTime currentTime= ConvertEpochToDatatime(currentEpoch);
+        // DateTime currentTime= ConvertEpochToDatatime(currentEpoch);
         return currentEpoch;
     }
 
@@ -378,9 +432,9 @@ public class DatabaseManager : MonoBehaviour
 [System.Serializable]
 public class LocalData
 {
-    
-    public int highscore = 0;   
-    public int selectedTheme = 0;        
+
+    public int highscore = 0;
+    public int selectedTheme = 0;
     public int coins;
     public int upgraded_hp = 0;
     public float upgraded_damage = 1;
@@ -390,9 +444,9 @@ public class LocalData
 
 
     public LocalData()
-    {  
+    {
         highscore = 0;
-        coins = 0;              
+        coins = 0;
         selectedTheme = 0;
         tokens = "0";
         upgraded_hp = 0;
@@ -414,6 +468,6 @@ public class TranscationInfo
     public TranscationInfo(string Id, string status)
     {
         transactionId = Id;
-        transactionStatus = status;        
+        transactionStatus = status;
     }
 }
