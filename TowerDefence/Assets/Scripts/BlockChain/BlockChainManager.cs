@@ -43,141 +43,11 @@ public class BlockChainManager : MonoBehaviour
     const string networkRPC = "https://polygontestapi.terminet.io/rpc";
 
 
-
-
-
-
-    private int expirationTime;
-    private string account;
-
-    [SerializeField] TMP_Text _status;
-    [SerializeField] GameObject playBTN;
-    [SerializeField] GameObject gameManagerOBJ;
-    [SerializeField] GameObject loginBTN;
-
-    private void Start()
-    {
-        //LoginWallet();
-        //TestIT();
-
-    }
-
-
-
-
-    public async void LoginWallet()
-    {
-        _status.text = "Connecting...";
-#if !UNITY_EDITOR
-        Web3Connect();
-        OnConnected();
-#else
-        // get current timestamp
-        int timestamp = (int)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
-        // set expiration time
-        int expirationTime = timestamp + 60;
-        // set message
-        string message = "Snake Mania Moonbeam\n" + expirationTime.ToString();
-        // sign message
-        string signature = await Web3Wallet.Sign(message);
-        // verify account
-        string account = await EVM.Verify(message, signature);
-        int now = (int)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
-        // validate
-        if (account.Length == 42 && expirationTime >= now)
-        {
-            // save account
-            PlayerPrefs.SetString("Account", account);
-
-            print("Account: " + account);
-            _status.text = "connected : " + account;
-            CheckUserBalance();
-
-
-
-            if (DatabaseManager.Instance)
-            {
-                DatabaseManager.Instance.GetData();
-            }
-            // load next scene
-        }
-        playBTN.SetActive(true);
-        gameManagerOBJ.SetActive(true);
-        loginBTN.SetActive(false);
-        SingletonDataManager.userethAdd = account;
-
-        getTokenBalance();
-        //getDailyToken();
-        //CheckPuzzleList();
-#endif
-
-    }
-
-
+ 
     #region BuyCoins
     async public void CoinBuyOnSendContract(int _pack)
     {
-
         MoralisManager.Instance.CoinBuyOnSendContract(_pack);
-        /* if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin purchase process started\nThis can up to minute", false);
-
-         object[] inputParams = { _pack };
-
-         float _amount = coinCost[_pack];
-         float decimals = 1000000000000000000; // 18 decimals
-         float wei = _amount * decimals;
-         print(Convert.ToDecimal(wei).ToString() + " " + inputParams.ToString() + " + " + Newtonsoft.Json.JsonConvert.SerializeObject(inputParams));
-         // smart contract method to call
-         string method = "BuyCoins";
-
-         // array of arguments for contract
-         string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
-         // value in wei
-         string value = Convert.ToDecimal(wei).ToString();
-         // gas limit OPTIONAL
-         string gasLimit = "";
-         // gas price OPTIONAL
-         string gasPrice = "";
-         // connects to user's browser wallet (metamask) to update contract state
-         try
-         {
-
-
- #if !UNITY_EDITOR
-             string response = await Web3GL.SendContract(method, abi, contract, args, value, gasLimit, gasPrice);
-             Debug.Log(response);
- #else
-             // string response = await EVM.c(method, abi, contract, args, value, gasLimit, gasPrice);
-             // Debug.Log(response);
-             string data = await EVM.CreateContractData(abi, method, args);
-             string response = await Web3Wallet.SendTransaction(chainId, contract, value, data, gasLimit, gasPrice);
-
-
-             Debug.Log(response);
- #endif
-
-             if (!string.IsNullOrEmpty(response))
-             {
-                 // InvokeRepeating("CheckTransactionStatus", 1*Time.timeScale, 5*Time.timeScale);
-
-
-                 if (MessaeBox.insta) MessaeBox.insta.showMsg("Your Transaction has been recieved\nCoins will reflect to your account once it is completed!", true);
-
-                 if (DatabaseManager.Instance)
-                 {
-                     DatabaseManager.Instance.AddTransaction(response, "pending", _pack);
-                 }
-
-                 CheckTransactionStatusWithTransID(response,0);
-
-             }
-
-         }
-         catch (Exception e)
-         {
-             if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
-             Debug.Log(e, this);
-         }*/
     }
     #endregion
 
@@ -192,7 +62,7 @@ public class BlockChainManager : MonoBehaviour
         _counter++;
         try
         {
-            string txConfirmed = await EVM.TxStatus("", "", _trxID, networkRPC);
+            string txConfirmed = "";// await EVM.TxStatus("", "", _trxID, networkRPC);
             Debug.Log(txConfirmed); // success, fail, pending
 
             if (txConfirmed.Equals("success"))
@@ -260,11 +130,11 @@ public class BlockChainManager : MonoBehaviour
         {
 
 #if !UNITY_EDITOR
-                response = await Web3GL.SendContract(method, abiToken, contractToken, args, value, gasLimit, gasPrice);
+               // response = await Web3GL.SendContract(method, abiToken, contractToken, args, value, gasLimit, gasPrice);
                 Debug.Log(response);
 #else
-            string data = await EVM.CreateContractData(abiToken, method, args);
-            response = await Web3Wallet.SendTransaction(chainId, contractToken, "0", data, gasLimit, gasPrice);
+            string data = "";// await EVM.CreateContractData(abiToken, method, args);
+            response = "";// await Web3Wallet.SendTransaction(chainId, contractToken, "0", data, gasLimit, gasPrice);
             Debug.Log(response);
 #endif
 
@@ -305,7 +175,7 @@ public class BlockChainManager : MonoBehaviour
         string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
         try
         {
-            string response = await EVM.Call(chain, network, contract, abi, method, args, networkRPC);
+            string response = "";// await EVM.Call(chain, network, contract, abi, method, args, networkRPC);
             Debug.Log(response);
             return response;
 
@@ -320,11 +190,6 @@ public class BlockChainManager : MonoBehaviour
     #endregion
 
     #region CheckNFTBalance
-
-    //public string balanceNFT;
-
-    //public List<string> nftList = new List<string>();
-
     public async Task<List<string>> GetNFTList()
     {
         return await MoralisManager.Instance.GetNFTList();
@@ -339,7 +204,7 @@ public class BlockChainManager : MonoBehaviour
         string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
         try
         {
-            string response = await EVM.Call(chain, network, contractToken, abiToken, method, args, networkRPC);
+            string response = "";// await EVM.Call(chain, network, contractToken, abiToken, method, args, networkRPC);
             Debug.Log(response);
             try
             {

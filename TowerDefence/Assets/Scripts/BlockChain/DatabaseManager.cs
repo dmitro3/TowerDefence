@@ -1,12 +1,9 @@
-using Defective.JSON;
 using MoralisUnity;
 using MoralisUnity.Platform.Queries;
 using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -38,40 +35,6 @@ public class DatabaseManager : MonoBehaviour
 
         return data;
     }
-
-
-    private void Start()
-    {
-       // StartCoroutine(getNFTAllData());
-        // GetData();
-    }
-
-
-    public async void getNFTDetailsData()
-    {
-        MoralisQuery<NFTData> monster = await Moralis.Query<NFTData>();
-        //monster = monster.WhereEqualTo("userid", useruniqid);
-        IEnumerable<NFTData> result = await monster.FindAsync();
-
-
-        foreach (NFTData mon in result)
-        {
-            Debug.Log("My username " + mon.data);
-            // userData = JsonConvert.DeserializeObject<localuserData>(mon.userdata);
-            allMetaDataServer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<MetaFunNFTLocal>>(mon.data);
-            GetAllNFTImg();
-            break;
-        }
-    }
-
-
-
-    /// <summary>
-    ///  
-    /// </summary>
-    /// <param name="dataType"></param>
-    /// <param name="createnew"></param>
-    /// <returns></returns>
 
 
     public async void updateProfile(int dataType, bool createnew = false)
@@ -254,76 +217,11 @@ public class DatabaseManager : MonoBehaviour
     }
 
 
-    IEnumerator getNFTAllData()
-    {
-
-        using (UnityWebRequest www = UnityWebRequest.Get(ConstantManager.getgameNFTData_api))
-        {
-            www.timeout = 60;
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("getNFTAllData not found " + www.downloadHandler.text);
-                //Debug.Log(www.error);
-                Debug.Log(www.downloadHandler.text);
-
-                //StartCoroutine(updateProfile(0, true));
-            }
-            else
-            {
-                Debug.Log("getNFTAllData  found " + www.downloadHandler.text);
-                JSONObject obj = new JSONObject(www.downloadHandler.text);
 
 
-                //data = Newtonsoft.Json.JsonConvert.DeserializeObject<LocalData>(obj.GetField("fields").GetField("data").GetField("stringValue").stringValue);
-                Debug.Log("Data >>  " + obj);
 
-                allMetaDataServer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<MetaFunNFTLocal>>(obj.GetField("fields").GetField("data").GetField("stringValue").stringValue);
 
-                GetAllNFTImg();
-            }
-        }
-    }
-    public void GetAllNFTImg()
-    {
-        for (int i = 0; i < allMetaDataServer.Count; i++)
-        {
-            StartCoroutine(GetTexture(allMetaDataServer[i].imageurl, i));
-        }
 
-    }
-    IEnumerator GetTexture(string _url, int _index)
-    {
-        UnityWebRequest www = UnityWebRequestTexture.GetTexture(_url);
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            allMetaDataServer[_index].imageTexture = (((DownloadHandlerTexture)www.downloadHandler).texture);
-        }
-    }
-
-    public Texture GetNFTTexture(int tokenId)
-    {
-        MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid == tokenId);
-        return result.imageTexture;
-    }
-
-    public string GetNFTName(int tokenId)
-    {
-        MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid == tokenId);
-        return result.name;
-    }
-    public MetaFunNFTLocal GetNFTMetaData(int tokenId)
-    {
-        MetaFunNFTLocal result = allMetaDataServer.Find(x => x.itemid == tokenId);
-        return result;
-    }
 
 
     public void GetData()
