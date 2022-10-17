@@ -101,7 +101,7 @@ public class MoralisManager : MonoBehaviour
         SingletonDataManager.insta.CheckUserData();
 
 
-        fetchAllTokenIds();
+        //fetchAllTokenIds();
 
         if (DatabaseManager.Instance)
         {

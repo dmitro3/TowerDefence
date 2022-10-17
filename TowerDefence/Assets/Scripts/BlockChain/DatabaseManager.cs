@@ -42,7 +42,7 @@ public class DatabaseManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(getNFTAllData());
+       // StartCoroutine(getNFTAllData());
         // GetData();
     }
 

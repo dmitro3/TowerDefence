@@ -3,7 +3,6 @@ using Defective.JSON;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -48,19 +47,6 @@ public class BlockChainManager : MonoBehaviour
 
 
 
-    float[] coinCost = { 0.025f, 0.050f, 0.075f, 0.1f, 0.050f };
-
-   
-
-    [DllImport("__Internal")]
-    private static extern void Web3Connect();
-
-    [DllImport("__Internal")]
-    private static extern string ConnectAccount();
-
-    [DllImport("__Internal")]
-    private static extern void SetConnectAccount(string value);
-
     private int expirationTime;
     private string account;
 
@@ -78,32 +64,7 @@ public class BlockChainManager : MonoBehaviour
 
 
 
-    public void LoginDone() {
 
-        MoralisManager.Instance.getUserDataonStart();
-
-            // save account
-            PlayerPrefs.SetString("Account", account);
-
-            print("Account: " + account);
-            _status.text = "connected : " + account;
-            CheckUserBalance();
-
-
-
-            if (DatabaseManager.Instance)
-            {
-                DatabaseManager.Instance.GetData();
-            }
-            // load next scene
-        
-        playBTN.SetActive(true);
-        gameManagerOBJ.SetActive(true);
-        loginBTN.SetActive(false);
-        SingletonDataManager.userethAdd = account;
-
-        getTokenBalance();
-    }
     public async void LoginWallet()
     {
         _status.text = "Connecting...";
@@ -144,42 +105,12 @@ public class BlockChainManager : MonoBehaviour
         gameManagerOBJ.SetActive(true);
         loginBTN.SetActive(false);
         SingletonDataManager.userethAdd = account;
-        
+
         getTokenBalance();
         //getDailyToken();
         //CheckPuzzleList();
 #endif
 
-    }
-
-    async private void OnConnected()
-    {
-        account = ConnectAccount();
-        while (account == "")
-        {
-            await new WaitForSecondsRealtime(2f);
-            account = ConnectAccount();
-        };
-        account = account.ToLower();
-        // save account for next scene
-        PlayerPrefs.SetString("Account", account);
-        _status.text = "connected : " + account;
-        // reset login message
-        SetConnectAccount("");
-        CheckUserBalance();
-
-        if (DatabaseManager.Instance)
-        {
-            DatabaseManager.Instance.GetData();
-        }
-        // load next scene
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
-        playBTN.SetActive(true);
-        gameManagerOBJ.SetActive(true);
-        loginBTN.SetActive(false);
-
-        //CoinBuyOnSendContract(0);
     }
 
 
@@ -188,75 +119,75 @@ public class BlockChainManager : MonoBehaviour
     {
 
         MoralisManager.Instance.CoinBuyOnSendContract(_pack);
-       /* if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin purchase process started\nThis can up to minute", false);
+        /* if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin purchase process started\nThis can up to minute", false);
 
-        object[] inputParams = { _pack };
+         object[] inputParams = { _pack };
 
-        float _amount = coinCost[_pack];
-        float decimals = 1000000000000000000; // 18 decimals
-        float wei = _amount * decimals;
-        print(Convert.ToDecimal(wei).ToString() + " " + inputParams.ToString() + " + " + Newtonsoft.Json.JsonConvert.SerializeObject(inputParams));
-        // smart contract method to call
-        string method = "BuyCoins";
+         float _amount = coinCost[_pack];
+         float decimals = 1000000000000000000; // 18 decimals
+         float wei = _amount * decimals;
+         print(Convert.ToDecimal(wei).ToString() + " " + inputParams.ToString() + " + " + Newtonsoft.Json.JsonConvert.SerializeObject(inputParams));
+         // smart contract method to call
+         string method = "BuyCoins";
 
-        // array of arguments for contract
-        string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
-        // value in wei
-        string value = Convert.ToDecimal(wei).ToString();
-        // gas limit OPTIONAL
-        string gasLimit = "";
-        // gas price OPTIONAL
-        string gasPrice = "";
-        // connects to user's browser wallet (metamask) to update contract state
-        try
-        {
-
-
-#if !UNITY_EDITOR
-            string response = await Web3GL.SendContract(method, abi, contract, args, value, gasLimit, gasPrice);
-            Debug.Log(response);
-#else
-            // string response = await EVM.c(method, abi, contract, args, value, gasLimit, gasPrice);
-            // Debug.Log(response);
-            string data = await EVM.CreateContractData(abi, method, args);
-            string response = await Web3Wallet.SendTransaction(chainId, contract, value, data, gasLimit, gasPrice);
+         // array of arguments for contract
+         string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
+         // value in wei
+         string value = Convert.ToDecimal(wei).ToString();
+         // gas limit OPTIONAL
+         string gasLimit = "";
+         // gas price OPTIONAL
+         string gasPrice = "";
+         // connects to user's browser wallet (metamask) to update contract state
+         try
+         {
 
 
-            Debug.Log(response);
-#endif
+ #if !UNITY_EDITOR
+             string response = await Web3GL.SendContract(method, abi, contract, args, value, gasLimit, gasPrice);
+             Debug.Log(response);
+ #else
+             // string response = await EVM.c(method, abi, contract, args, value, gasLimit, gasPrice);
+             // Debug.Log(response);
+             string data = await EVM.CreateContractData(abi, method, args);
+             string response = await Web3Wallet.SendTransaction(chainId, contract, value, data, gasLimit, gasPrice);
 
-            if (!string.IsNullOrEmpty(response))
-            {
-                // InvokeRepeating("CheckTransactionStatus", 1*Time.timeScale, 5*Time.timeScale);
+
+             Debug.Log(response);
+ #endif
+
+             if (!string.IsNullOrEmpty(response))
+             {
+                 // InvokeRepeating("CheckTransactionStatus", 1*Time.timeScale, 5*Time.timeScale);
 
 
-                if (MessaeBox.insta) MessaeBox.insta.showMsg("Your Transaction has been recieved\nCoins will reflect to your account once it is completed!", true);
+                 if (MessaeBox.insta) MessaeBox.insta.showMsg("Your Transaction has been recieved\nCoins will reflect to your account once it is completed!", true);
 
-                if (DatabaseManager.Instance)
-                {
-                    DatabaseManager.Instance.AddTransaction(response, "pending", _pack);
-                }
+                 if (DatabaseManager.Instance)
+                 {
+                     DatabaseManager.Instance.AddTransaction(response, "pending", _pack);
+                 }
 
-                CheckTransactionStatusWithTransID(response,0);
+                 CheckTransactionStatusWithTransID(response,0);
 
-            }
+             }
 
-        }
-        catch (Exception e)
-        {
-            if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
-            Debug.Log(e, this);
-        }*/
+         }
+         catch (Exception e)
+         {
+             if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
+             Debug.Log(e, this);
+         }*/
     }
     #endregion
 
-    
+
 
     async public static void CheckTransactionStatusWithTransID(string _trxID, int _type)
     {
         Debug.Log("Check CheckTransactionStatusWithTransID ");
         int _counter = 0;
-    HERE:
+        HERE:
         Debug.Log("Check Transaction " + _counter);
         _counter++;
         try
@@ -347,93 +278,21 @@ public class BlockChainManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(response))
         {
-             MessaeBox.insta.showMsg("Token will be credited soon", true);
-             CheckTransactionStatusWithTransID(response, 1);
+            MessaeBox.insta.showMsg("Token will be credited soon", true);
+            CheckTransactionStatusWithTransID(response, 1);
             //Debug.Log("In check");
             //CheckTransactionStatusWithTransID(response);
 
 
         }
-        else {
+        else
+        {
             if (MessaeBox.insta) MessaeBox.insta.showMsg("Server Error", true);
             Debug.Log("In check blank");
         }
 
     }
 
-    #region NonBurnNFTBuy
-    async public void NonBurnNFTBuyContract(int _no, string _uri)
-    {
-
-
-        //string uri = "ipfs://bafyreifebcra6gmbytecmxvmro3rjbxs6oqosw3eyuldcwf2qe53gbrpxy/metadata.json";
-
-        Debug.Log("Non Burn NFT Buy  " + _no + "URI : " + _uri);
-
-        object[] inputParams = { _no, _uri };
-
-        string method = "buyNonBurnItem"; // buyBurnItem";// "buyCoins";
-
-        // array of arguments for contract
-        string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
-        // value in wei
-        string value = "";// Convert.ToDecimal(wei).ToString();
-        // gas limit OPTIONAL
-        string gasLimit = "";
-        // gas price OPTIONAL
-        string gasPrice = "";
-        // connects to user's browser wallet (metamask) to update contract state
-        try
-        {
-
-#if !UNITY_EDITOR
-                string response = await Web3GL.SendContract(method, abi, contract, args, value, gasLimit, gasPrice);
-                Debug.Log(response);
-#else
-            //string response = await EVM.Call(chain, network, contract, abi, args, method, args);
-            //Debug.Log(response);
-            string data = await EVM.CreateContractData(abi, method, args);
-            string response = await Web3Wallet.SendTransaction(chainId, contract, "0", data, gasLimit, gasPrice);
-            Debug.Log(response);
-
-#endif
-
-
-
-
-            if (MessaeBox.insta) MessaeBox.insta.showMsg("Your Transaction has been recieved\nIt will reflect to your account once it is completed!", true);
-
-            if (StoreUI.insta)
-            {
-                StoreUI.insta.EnableNewItem();
-            }
-            if (!string.IsNullOrEmpty(response))
-            {
-
-
-                if (UIManager.Instance) UIManager.Instance.DeductCoins(_no);
-
-                CheckUserBalance();
-                if (StoreUI.insta)
-                {
-                    StoreUI.insta.SetBalanceText();
-                }
-            }
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e, this);
-            if (MessaeBox.insta)
-            {
-
-                MessaeBox.insta.showMsg("Server Error", true);
-
-            }
-
-        }
-    }
-    #endregion
 
 
     #region CheckTime
@@ -469,37 +328,6 @@ public class BlockChainManager : MonoBehaviour
     public async Task<List<string>> GetNFTList()
     {
         return await MoralisManager.Instance.GetNFTList();
-        /*// smart contract method to call
-        List<string> nftList = new List<string>();
-        nftList.Clear();
-        string method = "GetAllUserToken";
-        // array of arguments for contract
-        object[] inputParams = { PlayerPrefs.GetString("Account") };
-        string args = Newtonsoft.Json.JsonConvert.SerializeObject(inputParams);
-        Debug.Log("CheckPuzzleList ===================");
-        try
-        {
-            string response = await EVM.Call(chain, network, contract, abi, method, args, networkRPC);
-            Debug.Log("CheckPuzzleList =================== Now");
-            Debug.Log(response);
-            string[] splitArray = response.Split(char.Parse(",")); //return one word for each string in the array
-                                                                   //here, splitArray[0] = Give; splitArray[1] = me etc...
-
-            for (int i = 0; i < splitArray.Length; i++)
-            {
-                if (string.IsNullOrEmpty(splitArray[i])) continue;
-                nftList.Add(splitArray[i]);
-            }
-
-            //if (MetaManager.insta) MetaManager.insta.UpdatePlayerWorldProperties();
-            return nftList;
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e, this);
-            return nftList;
-        }*/
     }
 
     async public static void getTokenBalance()
@@ -526,7 +354,7 @@ public class BlockChainManager : MonoBehaviour
                     LocalData data = DatabaseManager.Instance.GetLocalData();
                     data.tokens = tokenBalance;
                     DatabaseManager.Instance.UpdateData(data);
-                   // if (UIManager.insta) UIManager.insta.UpdatePlayerUIData(true, data);
+                    // if (UIManager.insta) UIManager.insta.UpdatePlayerUIData(true, data);
                 }
             }
             catch (Exception)
@@ -558,70 +386,6 @@ public class BlockChainManager : MonoBehaviour
         Debug.Log("purchaseItem");
 
         MoralisManager.Instance.purchaseItem(_id, _skin);
-
-       /* MetadataNFT meta = new MetadataNFT();
-
-
-        meta.itemid = DatabaseManager.Instance.allMetaDataServer[_id].itemid;
-        meta.name = DatabaseManager.Instance.allMetaDataServer[_id].name;
-        meta.description = DatabaseManager.Instance.allMetaDataServer[_id].description;
-        meta.image = DatabaseManager.Instance.allMetaDataServer[_id].imageurl;
-
-        //StartCoroutine(UploadNFTMetadata(Newtonsoft.Json.JsonConvert.SerializeObject(meta), _id, _skin));
-        StartCoroutine(Upload(Newtonsoft.Json.JsonConvert.SerializeObject(meta), _id, _skin));*/
-
-    }
-
-   
-
-    IEnumerator Upload(string _metadata, int _id, bool _skin)
-    {
-
-        if (MessaeBox.insta) MessaeBox.insta.showMsg("NFT purchase process started\nThis can up to minute", false);
-        Debug.Log("UploadNFTMetadata uploading " + _metadata);
-        var form = new WWWForm();
-        form.AddBinaryData("file", System.Text.Encoding.UTF8.GetBytes(_metadata), "metadata.json", "application/json");
-        using (UnityWebRequest www = UnityWebRequest.Post("https://api.nft.storage/upload", form))
-        {
-            www.SetRequestHeader("Authorization", "Bearer " + ConstantManager.nftStorage_key);
-            www.timeout = 60;
-            yield return www.SendWebRequest();
-            if (www.isNetworkError || www.isHttpError || www.isNetworkError)
-            {
-                Debug.Log(www.error); 
-                Debug.Log("UploadNFTMetadata upload error " + www.downloadHandler.text);
-                if (MessaeBox.insta) MessaeBox.insta.showMsg("Server error\nPlease try again", true);
-
-
-            }
-            else
-            {
-                Debug.Log("Form upload complete!");
-                Debug.Log("UploadNFTMetadata upload complete! " + www.downloadHandler.text);
-
-                JSONObject j = new JSONObject(www.downloadHandler.text);
-                if (j.HasField("ok"))
-                {
-                    if (j.GetField("ok").boolValue)
-                    {
-                        if (!string.IsNullOrEmpty(j.GetField("value").GetField("cid").stringValue))
-                        {
-                            SingletonDataManager.nftmetaCDI = @"ipfs://" + j.GetField("value").GetField("cid").stringValue + "/metadata.json";
-
-                            Debug.Log("Metadata saved successfully " + _id + " | " + SingletonDataManager.nftmetaCDI);
-                            if (!_skin) NonBurnNFTBuyContract(_id,SingletonDataManager.nftmetaCDI);
-                            //if (!_skin) NonBurnNFTBuyContract(_id, j.GetField("value").GetField("url").stringValue);
-                            yield break;
-                        }
-                    }
-                }
-
-
-                if (MessaeBox.insta) MessaeBox.insta.showMsg("Server error\nPlease try again", true);
-
-
-            }
-        }
     }
 
     #endregion
