@@ -118,8 +118,8 @@ namespace MoralisUnity.Kits.AuthenticationKit
         /// </summary>
         /// <returns></returns>
         /// 
-        public string dapURL = "https://et300qpmxtn4.grandmoralis.com:2053/server";
-        public string dapUdappID = "mgLPobQvpgrftWYX0KKE4Qtgkvt2Ww3WXwOma5EX";
+        //public static string dapURL = "";
+        //public static string dapUdappID = "";
 
         public async UniTask InitializeAsync()
         {
@@ -133,8 +133,8 @@ namespace MoralisUnity.Kits.AuthenticationKit
             }
 
           
-            MoralisSettings.MoralisData.DappUrl = dapURL;
-            MoralisSettings.MoralisData.DappId = dapUdappID;
+            MoralisSettings.MoralisData.DappUrl = PlayerPrefs.GetString("DappUrl");
+            MoralisSettings.MoralisData.DappId = PlayerPrefs.GetString("DappId");
        
             // Initialize Moralis
             Moralis.Start();
