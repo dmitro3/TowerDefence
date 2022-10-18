@@ -10,7 +10,9 @@ public class InAppPurchase : MonoBehaviour
         {
             StoreUI.insta.SetBalanceText();
         }
+
     }
+
 
     public void BuyCoins(int Index)
     {

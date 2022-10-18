@@ -231,7 +231,7 @@ public class BlockChainManager : MonoBehaviour
     #region CheckUserBalance
     async public void CheckUserBalance()
     {
-        MoralisManager.Instance.CheckUserBalance();
+
     }
     #endregion
 

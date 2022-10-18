@@ -59,7 +59,8 @@ public class StoreUI : MonoBehaviour
        
         SetBalanceText();
         DisableOwnedItems(selectedTheme);
-        
+
+
     }   
 
     async public void DisableOwnedItems(int selectedTheme)

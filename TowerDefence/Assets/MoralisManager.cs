@@ -117,7 +117,7 @@ public class MoralisManager : MonoBehaviour
         SingletonDataManager.userethAdd = user.ethAddress;
 
         SingletonDataManager.initData = true;
-        CheckUserBalance();
+       
 
         SingletonDataManager.insta.CheckUserData();
 
@@ -128,8 +128,9 @@ public class MoralisManager : MonoBehaviour
         {
             DatabaseManager.Instance.GetData();
         }
-
+        CheckUserBalance();
         GetTokenBalance();
+
     }
 
 
@@ -167,10 +168,7 @@ public class MoralisManager : MonoBehaviour
         }
 
 
-        await UniTask.Delay(2000);
-        //SingletonDataManager.insta.GetNativeBalance();
-        CheckUserBalance();
-        GetTokenBalance();
+       
     }
     private async Task<string> PurchaseCoinsItemFromContract(BigInteger tokenId, float _cost)
     {
@@ -252,7 +250,6 @@ public class MoralisManager : MonoBehaviour
 
             if (UIManager.Instance) UIManager.Instance.DeductCoins((int)tokenId);
 
-            CheckUserBalance();
             if (StoreUI.insta)
             {
                 StoreUI.insta.SetBalanceText();
@@ -393,6 +390,7 @@ public class MoralisManager : MonoBehaviour
 
     public async UniTaskVoid CheckUserBalance()
     {
+        COMEHERE:
         // get BSC native balance for a given address
         NativeBalance BSCbalance = await Moralis.Web3Api.Account.GetNativeBalance(SingletonDataManager.userethAdd.ToLower(), ContractChain);
         //Debug.Log(BSCbalance.ToJson());
@@ -411,6 +409,8 @@ public class MoralisManager : MonoBehaviour
             SingletonDataManager.userMainBalance = userBalance.ToString();
             if (UIManager.Instance) UIManager.Instance.SetMainBalance();
         }
+        await UniTask.Delay(UnityEngine.Random.Range(5000,10000));
+        goto COMEHERE;
 
     }
     #endregion
@@ -484,6 +484,39 @@ public class MoralisManager : MonoBehaviour
 
     #region TokenFunctions
 
+    public async void GetTokenReward()
+    {
+        if (MessaeBox.insta) MessaeBox.insta.showMsg("Token redeem process started", false);
+        object[] parameters = {
+        };
+
+        // Set gas estimate
+        HexBigInteger value = new HexBigInteger(0);
+        HexBigInteger gas = new HexBigInteger(0);
+        // HexBigInteger gas = new HexBigInteger(150000);
+
+        //BigInteger _gascost = UnitConversion.Convert.ToWei(30, 9);
+        //HexBigInteger gasPrice = new HexBigInteger(_gascost);
+        HexBigInteger gasPrice = new HexBigInteger(0);
+
+        Debug.Log("DataTRansfer buyCoins " + JsonConvert.SerializeObject(parameters));
+
+
+        string resp = await Moralis.ExecuteContractFunction(contractToken, abiToken, "GetGameToken", parameters, value, gas, gasPrice);
+
+
+
+        if (!string.IsNullOrEmpty(resp))
+        {
+            if (MessaeBox.insta) MessaeBox.insta.showMsg("Token redeemed successfully", true);
+        }
+        else {
+            if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
+        }
+
+      
+    }
+
     public async UniTaskVoid ExchangeTokenUI(int index)
     {
         if (MessaeBox.insta) MessaeBox.insta.showMsg("Coin exchange process started", false);
@@ -510,11 +543,6 @@ public class MoralisManager : MonoBehaviour
             if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
         }
 
-
-        await UniTask.Delay(2000);
-        //SingletonDataManager.insta.GetNativeBalance();
-        CheckUserBalance();
-        GetTokenBalance();
     }
 
     async Task<string> ExchangeToken(int packID)
@@ -554,6 +582,7 @@ public class MoralisManager : MonoBehaviour
 
     public async UniTaskVoid GetTokenBalance()
     {
+        COMEHERE:
         // Function ABI input parameters
         object[] inputParams = new object[1];
         inputParams[0] = new { internalType = "address", name = "account", type = "address" };
@@ -579,6 +608,9 @@ public class MoralisManager : MonoBehaviour
 
         if (UIManager.Instance) UIManager.Instance.SetTokenBalance();
         Debug.Log("GetTokenBalance " + SingletonDataManager.userTokenBalance);
+
+        await UniTask.Delay(UnityEngine.Random.Range(5000, 10000));
+        goto COMEHERE;
 
     }
     #endregion

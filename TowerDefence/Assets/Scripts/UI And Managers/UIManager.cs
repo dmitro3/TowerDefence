@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] bool isInitialized = false;
 
-
+    [SerializeField] GameObject tokenButton;
 
     public TMP_Text AmmoCount;
     public TMP_Text HealthCount;
@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        tokenButton.SetActive(false);
 
         //UpdatePlayerUIData(DatabaseManager.Instance.GetLocalData());
     }
@@ -126,9 +126,13 @@ public class UIManager : MonoBehaviour
         DatabaseManager.Instance.UpdateData(data);
         UpdatePlayerUIData(data);
 
-        if (GameManager.Instance.EnemiesKilled >= 25)
+        if (GameManager.Instance.EnemiesKilled >= 15)
         {
             //tokenUI.SetActive(true);
+            tokenButton.SetActive(true);
+        }
+        else {
+            tokenButton.SetActive(false);
         }
 
 
