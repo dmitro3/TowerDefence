@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -27,7 +26,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject tokenUI;
 
     [SerializeField] GameObject Walls;
-    
+
     [SerializeField] bool isInitialized = false;
 
 
@@ -35,6 +34,8 @@ public class UIManager : MonoBehaviour
     public TMP_Text AmmoCount;
     public TMP_Text HealthCount;
     public TMP_Text CoinCount;
+    public TMP_Text MainBalanceTxt;
+    public TMP_Text TokenBalanceTxt;
 
     private void Awake()
     {
@@ -50,7 +51,15 @@ public class UIManager : MonoBehaviour
     }
 
 
+    public void SetMainBalance()
+    {
+        MainBalanceTxt.text = "Main Balance : " + SingletonDataManager.userMainBalance;
+    }
 
+    public void SetTokenBalance()
+    {
+        TokenBalanceTxt.text = "Token Balance : " + SingletonDataManager.userTokenBalance;
+    }
 
 
 
@@ -59,7 +68,7 @@ public class UIManager : MonoBehaviour
         if (data != null)
         {
             CoinCount.text = data.coins.ToString();
-         //   TokenAmount.text = data.tokens;
+            //   TokenAmount.text = data.tokens;
         }
     }
 
@@ -110,40 +119,41 @@ public class UIManager : MonoBehaviour
         Score.text = "Enemies Killed : " + GameManager.Instance.EnemiesKilled.ToString();
         CoinsAward.text = "Coins Earned : " + GameManager.Instance.CoinsEarned.ToString();
 
-        
+
         int highscore = DatabaseManager.Instance.GetLocalData().highscore;
         LocalData data = DatabaseManager.Instance.GetLocalData();
         data.coins += GameManager.Instance.CoinsEarned;
         DatabaseManager.Instance.UpdateData(data);
         UpdatePlayerUIData(data);
 
-        if (GameManager.Instance.EnemiesKilled >= 25) 
+        if (GameManager.Instance.EnemiesKilled >= 25)
         {
             //tokenUI.SetActive(true);
         }
 
 
-       /* if (GameManager.Instance.Score > highscore)
-        {
+        /* if (GameManager.Instance.Score > highscore)
+         {
 
-            highscore = GameManager.Instance.Score;
-            data.highscore = highscore;
+             highscore = GameManager.Instance.Score;
+             data.highscore = highscore;
 
-        }
-        HighScore_Txt.text = "High Score : " + highscore;*/
+         }
+         HighScore_Txt.text = "High Score : " + highscore;*/
     }
 
-   
 
-    public void RedeemToken() {
+
+    public void RedeemToken()
+    {
         tokenUI.SetActive(false);
         MessaeBox.insta.showMsg("Token redeem process started", false);
         BlockChainManager.Instance.getDailyToken();
     }
 
-   
+
     public void UpdateScore()
     {
-       // CurrentScore.text = "Score : " + GameManager.Instance.Score.ToString();
+        // CurrentScore.text = "Score : " + GameManager.Instance.Score.ToString();
     }
 }

@@ -16,4 +16,9 @@ public class InAppPurchase : MonoBehaviour
     {
         BlockChainManager.Instance.CoinBuyOnSendContract(Index);
     }
+
+    public async void ExchangeToken(int Index)
+    {
+        MoralisManager.Instance.ExchangeTokenUI(Index);
+    }
 }
