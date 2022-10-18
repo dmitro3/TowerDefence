@@ -34,6 +34,10 @@ public class UIManager : MonoBehaviour
     public TMP_Text AmmoCount;
     public TMP_Text HealthCount;
     public TMP_Text CoinCount;
+
+    public TMP_Text scoreTxt;
+    public TMP_Text enemTxt;
+
     public TMP_Text MainBalanceTxt;
     public TMP_Text TokenBalanceTxt;
 
@@ -50,6 +54,11 @@ public class UIManager : MonoBehaviour
         //UpdatePlayerUIData(DatabaseManager.Instance.GetLocalData());
     }
 
+    private void LateUpdate()
+    {
+        scoreTxt.text = GameManager.Instance.CoinsEarned.ToString();
+        enemTxt.text = GameManager.Instance.EnemiesKilled.ToString();
+    }
 
     public void SetMainBalance()
     {
@@ -131,7 +140,8 @@ public class UIManager : MonoBehaviour
             //tokenUI.SetActive(true);
             tokenButton.SetActive(true);
         }
-        else {
+        else
+        {
             tokenButton.SetActive(false);
         }
 
