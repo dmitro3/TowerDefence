@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] bool isInitialized = false;
 
-    [SerializeField] GameObject tokenButton;
+    public GameObject tokenButton;
 
     public TMP_Text AmmoCount;
     public TMP_Text HealthCount;

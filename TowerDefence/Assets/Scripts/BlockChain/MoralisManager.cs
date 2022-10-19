@@ -456,6 +456,8 @@ public class MoralisManager : MonoBehaviour
             if (MessaeBox.insta) MessaeBox.insta.showMsg("Transaction Has Been Failed", true);
         }
 
+        UIManager.Instance.tokenButton.SetActive(false);
+
 
     }
 
