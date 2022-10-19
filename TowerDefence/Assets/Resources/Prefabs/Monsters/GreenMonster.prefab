@@ -462,8 +462,8 @@ MonoBehaviour:
   AttackRate: 10
   Target: {fileID: 0}
   CoinValue: 15
-  maxHealth: 5
-  health: 5
+  maxHealth: 4
+  health: 4
   healthbar: {fileID: 5935295752154209212}
 --- !u!114 &1118155908332024566
 MonoBehaviour:
