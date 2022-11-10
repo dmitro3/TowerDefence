@@ -183,7 +183,7 @@ public class MoralisManager : MonoBehaviour
         };
 
         // Set gas estimate
-        HexBigInteger value = new HexBigInteger(UnitConversion.Convert.ToWei(_cost));
+        HexBigInteger value = new HexBigInteger(BigInteger.Parse(UnitConversion.Convert.ToWei(_cost,18).ToString()));
         HexBigInteger gas = new HexBigInteger(0);
         // HexBigInteger gas = new HexBigInteger(150000);
 
