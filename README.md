@@ -14,10 +14,10 @@ Tower Defence is classic strategic top down game where we have to protect our to
 
 ## Technologies
 - Unity game engine
-- [Moralis Unity SDK for user authentication, NFT and smart contract execution/calls and more](https://github.com/MoraG22/TowerDefence/blob/main/Moralis.md
+- [Moralis Unity SDK for user authentication, NFT and smart contract execution/calls and more](https://github.com/MoraG22/TowerDefence/blob/main/Moralis.md)
 - [Polygon (Mumbai Testnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/MoraG22/TowerDefence/blob/main/Polygon.md)
 - [BNB ( Testnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/MoraG22/TowerDefence/blob/main/BNB.md)
-- [Fantom (Mainnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/MoraG22/TowerDefence/blob/main/Fantom.md
+- [Fantom (Mainnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/MoraG22/TowerDefence/blob/main/Fantom.md)
 - [Covalant API to fetch balance and NFT data](https://github.com/MoraG22/TowerDefence/blob/main/Covalent.md)
 - Remix IDE used to create smart contract for ERC-1155 NFT and In-app store
 
