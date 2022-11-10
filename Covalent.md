@@ -1,28 +1,63 @@
 
-## Polygon mumbai
+## Covalent API
 
-### Contract Address : 
-1) 0xa569382C265c2f437fa957ce5FFb8E7Fe865159E
-2) 0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d8289
+* Get user's native balance
+* Get user's token balance
 
-### Blockchain: Polygon Mumbai - Testnet
-### Explorer : 
-1) https://mumbai.polygonscan.com/address/0xa569382C265c2f437fa957ce5FFb8E7Fe865159E
-2) https://mumbai.polygonscan.com/address/0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d8289
+### Script :
+https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Assets/Scripts/BlockChain/CovalentManager.cs
 
-#### Script : https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Assets/Scripts/BlockChain/MoralisManager.cs
+``` C#
+ public IEnumerator GetAddressBalanaces()
+    {
+        while (true)
+        {
+            BalanceFetchPreURL = "https://api.covalenthq.com/v1/" + chainID + "/address/";
 
-### Polygon smart contract for
-* in-app purchase
-* mint weapons as NFT 1155
-* Reward token ERC-20
-* Exchange or reward token to buy coins
-* smart contract function calls like nft uri and other
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(BalanceFetchPreURL + SingletonDataManager.userethAdd + BalanceFetchPostURL))
+            {
+                webRequest.timeout = 10;
+                yield return webRequest.SendWebRequest();
+                switch (webRequest.result)
+                {
+                    case UnityWebRequest.Result.ConnectionError:
+                        break;
+                    case UnityWebRequest.Result.DataProcessingError:
+                        Debug.LogError("Error: " + webRequest.error);
+                        break;
+                    case UnityWebRequest.Result.ProtocolError:
+                        Debug.LogError("HTTP Error: " + webRequest.error);
+                        break;
+                    case UnityWebRequest.Result.Success:
+                        Debug.Log("Received: " + webRequest.downloadHandler.text);
+
+                        JSONObject _data = new JSONObject(webRequest.downloadHandler.text);
+
+                        if (_data.GetField("data").HasField("items"))
+                        {
+                            for (int i = 0; i < _data.GetField("data").GetField("items").list.Count; i++)
+                            {
+                                var _add = _data.GetField("data").GetField("items")[i].GetField("native_token").boolValue;
+                                var temp2 = _data.GetField("data").GetField("items")[i].GetField("contract_address").stringValue.ToLower();
+
+                                if (_add)
+                                {
+                                    usrMainBalance = Math.Round((double)UnitConversion.Convert.FromWei(BigInteger.Parse(_data.GetField("data").GetField("items")[i].GetField("balance").stringValue)), 4).ToString();
+                                }
+
+                                if (MoralisManager.contractToken.ToLower().Equals(temp2))
+                                {
+                                    usrTokenBalance = Math.Round((double)UnitConversion.Convert.FromWei(BigInteger.Parse(_data.GetField("data").GetField("items")[i].GetField("balance").stringValue)), 4).ToString();
+
+                                }
+                            }
+                        }
+                        break;
+                }
 
 
-### Polygon smart contract source code
-1) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Contract/Contract1.txt
-2) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Contract/Contract2.txt
-
-![Use](/Images/TDB_1.jpg)
-![Use](/Images/TDB_2.jpg)
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(11, 30));
+        }
+    }
+```
