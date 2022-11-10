@@ -6,8 +6,9 @@
 2) 0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d8289
 
 ### Blockchain: Polygon Mumbai - Testnet
-### Explorer : https://mumbai.polygonscan.com/address/0xa569382C265c2f437fa957ce5FFb8E7Fe865159E
-https://mumbai.polygonscan.com/address/0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d8289
+### Explorer : 
+1) https://mumbai.polygonscan.com/address/0xa569382C265c2f437fa957ce5FFb8E7Fe865159E
+2) https://mumbai.polygonscan.com/address/0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d8289
 
 #### Script : https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Assets/Scripts/BlockChain/MoralisManager.cs
 
@@ -20,8 +21,8 @@ https://mumbai.polygonscan.com/address/0xe6f1Fe880F35C98EE0bbfbBa8967d424f39d828
 
 
 ### Polygon smart contract source code
-1) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Assets/Contract/Contract1.txt
-2) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Assets/Contract/Contract2.txt
+1) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Contract/Contract1.txt
+2) https://github.com/MoraG22/TowerDefence/blob/main/TowerDefence/Contract/Contract2.txt
 
 ![Use](/Images/TDB_1.jpg)
 ![Use](/Images/TDB_2.jpg)
