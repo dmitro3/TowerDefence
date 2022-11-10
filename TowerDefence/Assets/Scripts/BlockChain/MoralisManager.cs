@@ -143,7 +143,6 @@ public class MoralisManager : MonoBehaviour
 
     #endregion
 
-
     #region BuyCoins
 
     public async UniTaskVoid CoinBuyOnSendContract(int index)
@@ -355,61 +354,6 @@ public class MoralisManager : MonoBehaviour
 
     }
     #endregion
-
-    #region Random Number Generator
-
-    async public UniTask<int> GetRandomNumber()
-    {
-        object[] parameters = { };
-
-        // Set gas estimate
-        HexBigInteger value = new HexBigInteger(0);
-        HexBigInteger gas = new HexBigInteger(0);
-        HexBigInteger gasPrice = new HexBigInteger(0);
-
-        Debug.Log("DataTRansfer " + JsonConvert.SerializeObject(parameters));
-
-
-        string response = await Moralis.ExecuteContractFunction("", "", "SendRandomNoRequest", parameters, value, gas, gasPrice);
-        Debug.Log("GetRandomNumber " + response);
-
-        if (!string.IsNullOrEmpty(response))
-        {
-            var result = await GetRandomNoFromContract();
-            if (!string.IsNullOrEmpty(result)) return int.Parse(result);
-        }
-
-        return -1;
-    }
-
-    public async UniTask<string> GetRandomNoFromContract()
-    {
-        // Function ABI input parameters
-        object[] inputParams = new object[1];
-        inputParams[0] = new { internalType = "address", name = "player", type = "address" };
-        // Function ABI Output parameters
-        object[] outputParams = new object[1];
-        outputParams[0] = new { internalType = "uint256", name = "", type = "uint256" };
-        // Function ABI
-        object[] abi = new object[1];
-        abi[0] = new { inputs = inputParams, name = "GetRandomNo", outputs = outputParams, stateMutability = "view", type = "function" };
-
-        // Define request object
-        RunContractDto rcd = new RunContractDto()
-        {
-            Abi = abi,
-            Params = new { player = SingletonDataManager.userethAdd }
-        };
-        string resp = await Moralis.Web3Api.Native.RunContractFunction<string>("", "GetRandomNo", rcd, ContractChain);
-
-        Debug.Log("GetRandomNoFromContract " + resp);
-        return resp;
-
-
-
-    }
-    #endregion
-
 
     #region NFTUploaded
 
