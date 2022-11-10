@@ -18,6 +18,7 @@ Tower Defence is classic strategic top down game where we have to protect our to
 - [Polygon (Mumbai Testnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/)
 - [BNB ( Testnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/)
 - [Fantom (Mainnet) for in-game purchase, Weapons NFT and reward token ERC-20, exchange token](https://github.com/)
+- [Covalant API to fetch balance and NFT data](https://github.com/)
 - Remix IDE used to create smart contract for ERC-1155 NFT and In-app store
 
 ### Smart Contracts
