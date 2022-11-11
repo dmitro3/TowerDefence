@@ -1,7 +1,12 @@
 # Tower Defence
 Tower Defence is classic strategic top down game where we have to protect our tower from enemies. Different upgradable weapons to protect in hard condition and this game also includes web3 features like NFT, in game purchase with crypto, game reward ERC-20 token and many more
 
-### [Click Here To Play](https://www)
+### [Click Here To Play](https://bafybeih4lbvkp4q4pmqkntslps577koj3orb37hvjb5s5mhwalshvndbja.ipfs.gateway.valist.io/)
+
+### Prerequisite
+* BNB Testnet OR Polygon Testnet OR Fantom Mainnet Network in Metamask
+* Testnet OR Mainnet balance in account
+* Play from Desktop or Laptop only
 
 ## Features
 - Multichain support
